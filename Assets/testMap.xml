@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="13">
-	<tileset firstgid="1" source="../siba.tsx" />
-	<tileset firstgid="6" source="../townObject.tsx" />
-	<layer name="floor" width="20" height="20">
-		<data encoding="csv">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" source="../siba.tsx"/>
+ <tileset firstgid="6" source="../townObject.tsx"/>
+ <layer name="floor" width="20" height="20">
+  <data encoding="csv">
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -25,9 +25,9 @@
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5
 </data>
-	</layer>
-	<layer name="object" width="20" height="20">
-		<data encoding="csv">
+ </layer>
+ <layer name="object" width="20" height="20">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -49,12 +49,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-	</layer>
-	<layer name="Collision" width="20" height="20" opacity="0.49">
-		<properties>
-			<property name="IsCollision" type="int" value="1" />
-		</properties>
-		<data encoding="csv">
+ </layer>
+ <layer name="Collision" width="20" height="20" opacity="0.49">
+  <properties>
+   <property name="IsCollision" type="int" value="1"/>
+  </properties>
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,0,
 0,140,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,140,0,
@@ -76,17 +76,5 @@
 0,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-	</layer>
-	<objectgroup name="collision">
-		<object id="11" x="126.041" y="44.9364" width="31.7843" height="21.9202">
-			<properties>
-				<property name="start" type="int" value="1" />
-			</properties>
-		</object>
-		<object id="12" x="190.706" y="54.8005">
-			<properties>
-				<property name="start2" type="int" value="2" />
-			</properties>
-		</object>
-	</objectgroup>
+ </layer>
 </map>

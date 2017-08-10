@@ -90,6 +90,8 @@ namespace Resource.TiledMap
         {
             [XmlAttribute("name")]
             public string Name;
+            [XmlAttribute("type")]
+            public string Type;
             [XmlAttribute("value")]
             public string Value;
 
@@ -162,6 +164,8 @@ namespace Resource.TiledMap
 
         public class ObjectGroup
         {
+            [XmlAttribute("name")]
+            public string Name;
             [XmlElement("object")]
             public List<Object> Objects;
         }
@@ -174,13 +178,13 @@ namespace Resource.TiledMap
             [XmlAttribute("type")]
             public string Type;
             [XmlAttribute("x")]
-            public int X;
+            public float X;
             [XmlAttribute("y")]
-            public int Y;
+            public float Y;
             [XmlAttribute("width")]
-            public int Width;
+            public float Width;
             [XmlAttribute("height")]
-            public int Height;
+            public float Height;
             [XmlElement("properties")]
             public Properties Properties;
         }
