@@ -17,13 +17,14 @@ namespace Resource.TiledMap
         private TiledMap.TileSet currentTileSet = null;
         private List<Sprite> sliceTileSet = null;
 
-        //TileSetのImageとxmlまでのpath
-        private string tileImagePathHead = "Tiles/";
+
 
         private void Start()
         {
             // 読み込んでパース
             this.tiledMap = XMLParser.LoadFromXml<TiledMap>(this.TMX);
+            //TiledMapEditorの現在の仕様に対応
+            this.tiledMap.InitializeSettings();
 
             // 敷き詰め
             this.CreateTiledMap();
@@ -55,13 +56,11 @@ namespace Resource.TiledMap
         }
 
         private void SliceTilseSet()
-        {
+        {   //for(i)
             //ここで指定されたpathからxmlを読み込み, image等をTileSetクラスに保存する
-            //string path = this.currentTileSet.SourceImage.SourceName;
-            var tileset = GetTileSetXml(this.currentTileSet.Source);
-            this.tiledMap.SetImageData(0, tileset);
-            string path = tileset.GetImageSourcePath(tileImagePathHead);
-            //string path = this.GetImageSourcePath(this.currentTileSet.Source);
+            //var tileset = GetTileSetXml(this.currentTileSet.Source);
+            //this.tiledMap.SetImageData(0, tileset);
+            string path = tiledMap.GetImageSourcePath(0);//tileset.GetImageSourcePath(tileImagePathHead);
             Sprite textureMap = Resources.Load(path, typeof(Sprite)) as Sprite;
 
             if (textureMap == null)
@@ -101,13 +100,13 @@ namespace Resource.TiledMap
         /// </summary>
         /// <returns>The tile set xml.</returns>
         /// <param name="path">Path.</param>
-        private TileSetXml GetTileSetXml(string path)
+        /*private TileSetXml GetTileSetXml(string path)
         {
             var filename = GetTileSetXmlPath(path);
             var TMX = Resources.Load<TextAsset>(tileImagePathHead + filename);
             var tileSetXml = XMLParser.LoadFromXml<TileSetXml>(TMX);
             return tileSetXml;
-        }
+        }*/
 
 
         private void Tiled(TiledMap.Layer layer)
@@ -222,11 +221,11 @@ namespace Resource.TiledMap
         /// </summary>
         /// <returns>The tile set xml path.</returns>
         /// <param name="path">Path.</param>
-        private string GetTileSetXmlPath(string path)
+        /*private string GetTileSetXmlPath(string path)
         {
             string[] str = path.Split('/');
             string[] st = str[str.Length - 1].Split('.');
             return st[0];
-        }
+        }*/
     }
 }

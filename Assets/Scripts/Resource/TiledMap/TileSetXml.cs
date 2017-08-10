@@ -22,12 +22,12 @@ namespace Resource.TiledMap
 
 
         //ResourceからImageまでのフルパスを渡す.
-        public string GetImageSourcePath(string pathHead)
+        /*public string GetImageSourcePath(string pathHead)
         {
             string[] str = SourceImage.SourceName.Split('/');
             var st = str[str.Length - 1].Split('.');
             return pathHead + st[0];
-        }
+        }*/
 
     }
 
