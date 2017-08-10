@@ -1,5 +1,5 @@
 ﻿/*********************************
- 2015-05-30
+2015-05-30
 *********************************/
 using UnityEngine;
 using System.Collections.Generic;
@@ -32,10 +32,15 @@ namespace Resource.TiledMap
 
         private void CreateTiledMap()
         {
-            this.currentTileSet = this.tiledMap.TileSets[0];    // 複数はとりあえず想定しない
+            tiledMap.TileSets.ForEach(x =>
+            {
+                this.currentTileSet = x;
+                // タイルセット画像をスライスしていく
+                this.SliceTilseSet();
+            });
+            //this.currentTileSet = this.tiledMap.TileSets[0];    // 複数はとりあえず想定しない
 
-            // タイルセット画像をスライスしていく
-            this.SliceTilseSet();
+
             if (this.sliceTileSet == null || this.sliceTileSet.Count == 0)
             {
                 return;
@@ -56,11 +61,9 @@ namespace Resource.TiledMap
         }
 
         private void SliceTilseSet()
-        {   //for(i)
-            //ここで指定されたpathからxmlを読み込み, image等をTileSetクラスに保存する
-            //var tileset = GetTileSetXml(this.currentTileSet.Source);
-            //this.tiledMap.SetImageData(0, tileset);
-            string path = tiledMap.GetImageSourcePath(0);//tileset.GetImageSourcePath(tileImagePathHead);
+        {
+
+            string path = tiledMap.GetImageSourcePath(currentTileSet);//tileset.GetImageSourcePath(tileImagePathHead);
             Sprite textureMap = Resources.Load(path, typeof(Sprite)) as Sprite;
 
             if (textureMap == null)

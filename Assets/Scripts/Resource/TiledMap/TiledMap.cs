@@ -1,6 +1,6 @@
 ﻿/*********************************
- 2015-05-31 TiledMapデータ
- (.xmlの要素に従って配置)
+2015-05-31 TiledMapデータ
+(.xmlの要素に従って配置)
 *********************************/
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -388,9 +388,9 @@ namespace Resource.TiledMap
             return st[0];
         }
 
-        public string GetImageSourcePath(int i)
+        public string GetImageSourcePath(TileSet set)
         {
-            return tileImagePathHead + this.GetFileNameFromPath(TileSets[i].SourceImage.SourceName);
+            return tileImagePathHead + this.GetFileNameFromPath(set.SourceImage.SourceName);
         }
 
         #endregion
