@@ -89,9 +89,11 @@ namespace Resource.TiledMap
                         this.tiledMap.TileWidth,
                         this.tiledMap.TileHeight
                     );
+                    Debug.Log("rect=" + rect + "num=" + (x + y * 8));
                     // スライス
-                    Sprite tile = Sprite.Create(textureMap.texture, rect, pivot, this.tiledMap.TileWidth);
+                    Sprite tile = Sprite.Create(textureMap.texture, rect, pivot, this.tiledMap.TileWidth, 0, SpriteMeshType.FullRect);
                     // 格納
+                    Debug.Log(tile.textureRect);
                     this.sliceTileSet.Add(tile);
                     counter++;
                 }
@@ -145,22 +147,45 @@ namespace Resource.TiledMap
 
         }
 
+        Color clear = new Color(0, 0, 0, 0);
         private Texture2D CreateLayerTexture(List<TiledMap.TiledData> tiles, TiledMap.Layer layer)
         {
             var texture = new Texture2D(layer.Width * tiledMap.TileWidth, layer.Height * tiledMap.TileHeight, TextureFormat.ARGB32, false);
+            Color[] colors;
+            Sprite tileSprite;
             foreach (var tiledData in tiles)
             {
 
-                var tileSprite = this.sliceTileSet[tiledData.ID];
-                //ピクセルの取得      
-                Color[] colors = tileSprite.texture.GetPixels(
+                if (tiledData.ID == -1)//空の透明マップ
+                {
+                    tileSprite = this.sliceTileSet[0];
+                    colors = colors = tileSprite.texture.GetPixels(
+                        (int)tileSprite.textureRect.x,
+                        (int)tileSprite.textureRect.y,
+                        (int)tileSprite.textureRect.width,
+                        (int)tileSprite.textureRect.height
+                    );
+                    for (int i = 0; i < colors.Length; i++)
+                        colors[i] = clear;
+                    Debug.Log(tileSprite.textureRect);
+                    Debug.Log(colors.Length);
+
+
+                }
+                else//何かしらのマップ
+                {
+                    tileSprite = this.sliceTileSet[tiledData.ID];
+                    //ピクセルの取得      
+                    colors = tileSprite.texture.GetPixels(
                     (int)tileSprite.textureRect.x,
                     (int)tileSprite.textureRect.y,
                     (int)tileSprite.textureRect.width,
-                    (int)tileSprite.textureRect.height
-                );
+                    (int)tileSprite.textureRect.height);
 
-                Debug.Log(tiledData.X);
+                    Debug.Log(tileSprite.textureRect);
+                    Debug.Log(colors.Length);
+                }
+
                 // 空のテクスチャへ指定の位置にセット(左上から下に向けて描画)
                 texture.SetPixels(
                     tiledData.X * (int)tileSprite.textureRect.width, // タイルのx座標位置
