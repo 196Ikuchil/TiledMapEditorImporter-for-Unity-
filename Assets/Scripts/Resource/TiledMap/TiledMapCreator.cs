@@ -16,7 +16,8 @@ namespace Resource.TiledMap
         private TiledMap.TileSet currentTileSet = null;
         private List<Sprite> sliceTileSet = null;
 
-
+        [SerializeField]
+        bool sprite = false;
 
         private void Start()
         {
@@ -112,23 +113,68 @@ namespace Resource.TiledMap
             goLayer.transform.parent = this.gameObject.transform;
 
             List<TiledMap.TiledData> tiles = this.tiledMap.GetLayerData(layer);
+
+            if (sprite)
+            {
+                foreach (var tiledData in tiles)
+                {
+
+                    if (tiledData.GID == 0)
+                    {
+                        // ブランクタイル
+                        continue;
+                    }
+
+                    // タイルスプライトを作って設置
+                    GameObject tile = this.CreateTileSprite(tiledData, layer.Name);
+                    tile.transform.position = new Vector3(tiledData.X, tiledData.Y * -1, 0);
+                    tile.transform.parent = goLayer.transform;
+                    tile.layer = goLayer.layer;
+
+                }
+            }
+            else
+            {
+                //Textureでレイヤーを作成
+                var texture = CreateLayerTexture(tiles, layer);
+                SpriteRenderer spriteRenderer = goLayer.AddComponent<SpriteRenderer>();
+                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero, 32f, 0, SpriteMeshType.FullRect);
+                spriteRenderer.sprite = sprite;
+                spriteRenderer.sharedMaterial = this.TiledDefaultMaterial;
+            }
+
+        }
+
+        private Texture2D CreateLayerTexture(List<TiledMap.TiledData> tiles, TiledMap.Layer layer)
+        {
+            var texture = new Texture2D(layer.Width * tiledMap.TileWidth, layer.Height * tiledMap.TileHeight, TextureFormat.ARGB32, false);
             foreach (var tiledData in tiles)
             {
 
-                if (tiledData.GID == 0)
-                {
-                    // ブランクタイル
-                    continue;
-                }
+                var tileSprite = this.sliceTileSet[tiledData.ID];
+                //ピクセルの取得      
+                Color[] colors = tileSprite.texture.GetPixels(
+                    (int)tileSprite.textureRect.x,
+                    (int)tileSprite.textureRect.y,
+                    (int)tileSprite.textureRect.width,
+                    (int)tileSprite.textureRect.height
+                );
 
-                // タイルスプライトを作って設置
-                GameObject tile = this.CreateTileSprite(tiledData, layer.Name);
-                tile.transform.position = new Vector3(tiledData.X, tiledData.Y * -1, 0);
-                tile.transform.parent = goLayer.transform;
-                tile.layer = goLayer.layer;
+                Debug.Log(tiledData.X);
+                // 空のテクスチャへ指定の位置にセット(左上から下に向けて描画)
+                texture.SetPixels(
+                    tiledData.X * (int)tileSprite.textureRect.width, // タイルのx座標位置
+                    texture.height - (tiledData.Y + 1) * (int)tileSprite.textureRect.height, // タイルのy座標位置
+                    (int)tileSprite.textureRect.width,
+                    (int)tileSprite.textureRect.height,
+                    colors  // 抽出したタイルのピクセル情報
+                );
             }
+            texture.Apply();
+            return texture;
         }
 
+        //spriteを使用する場合に使う
         private GameObject CreateTileSprite(TiledMap.TiledData tiledData, string layerName)
         {
             GameObject tile = new GameObject("tile_" + tiledData.GID);
