@@ -45,11 +45,12 @@ namespace Resource.TiledMap
                 return;
             }
 
-
+            int z = 0;
             // 敷き詰める
             foreach (var layer in this.tiledMap.Layers)
             {
-                this.Tiled(layer);
+                this.Tiled(layer, z);
+                z++;
             }
 
             // オブジェクト配置
@@ -89,11 +90,9 @@ namespace Resource.TiledMap
                         this.tiledMap.TileWidth,
                         this.tiledMap.TileHeight
                     );
-                    Debug.Log("rect=" + rect + "num=" + (x + y * 8));
                     // スライス
                     Sprite tile = Sprite.Create(textureMap.texture, rect, pivot, this.tiledMap.TileWidth, 0, SpriteMeshType.FullRect);
                     // 格納
-                    Debug.Log(tile.textureRect);
                     this.sliceTileSet.Add(tile);
                     counter++;
                 }
@@ -103,7 +102,7 @@ namespace Resource.TiledMap
 
 
 
-        private void Tiled(TiledMap.Layer layer)
+        private void Tiled(TiledMap.Layer layer, int z)
         {
             GameObject goLayer = new GameObject(layer.Name);
             int layerIndex = LayerMask.NameToLayer(layer.Name);
@@ -113,6 +112,8 @@ namespace Resource.TiledMap
             }
 
             goLayer.transform.parent = this.gameObject.transform;
+            goLayer.transform.position = new Vector3(0, 0, z * -1);
+
 
             List<TiledMap.TiledData> tiles = this.tiledMap.GetLayerData(layer);
 
@@ -151,25 +152,26 @@ namespace Resource.TiledMap
         private Texture2D CreateLayerTexture(List<TiledMap.TiledData> tiles, TiledMap.Layer layer)
         {
             var texture = new Texture2D(layer.Width * tiledMap.TileWidth, layer.Height * tiledMap.TileHeight, TextureFormat.ARGB32, false);
-            Color[] colors;
-            Sprite tileSprite;
+
+            Sprite tileSprite = this.sliceTileSet[0];
+            Color[] colors = colors = tileSprite.texture.GetPixels(
+                            (int)tileSprite.textureRect.x,
+                            (int)tileSprite.textureRect.y,
+                            (int)tileSprite.textureRect.width,
+                            (int)tileSprite.textureRect.height
+                        );
+            for (int i = 0; i < colors.Length; i++)
+                colors[i] = clear;
+            //透明用
+            Color[] emptyColors = colors;
+
+
+
             foreach (var tiledData in tiles)
             {
-
                 if (tiledData.ID == -1)//空の透明マップ
                 {
-                    tileSprite = this.sliceTileSet[0];
-                    colors = colors = tileSprite.texture.GetPixels(
-                        (int)tileSprite.textureRect.x,
-                        (int)tileSprite.textureRect.y,
-                        (int)tileSprite.textureRect.width,
-                        (int)tileSprite.textureRect.height
-                    );
-                    for (int i = 0; i < colors.Length; i++)
-                        colors[i] = clear;
-                    Debug.Log(tileSprite.textureRect);
-                    Debug.Log(colors.Length);
-
+                    colors = emptyColors;
 
                 }
                 else//何かしらのマップ
@@ -181,9 +183,6 @@ namespace Resource.TiledMap
                     (int)tileSprite.textureRect.y,
                     (int)tileSprite.textureRect.width,
                     (int)tileSprite.textureRect.height);
-
-                    Debug.Log(tileSprite.textureRect);
-                    Debug.Log(colors.Length);
                 }
 
                 // 空のテクスチャへ指定の位置にセット(左上から下に向けて描画)
