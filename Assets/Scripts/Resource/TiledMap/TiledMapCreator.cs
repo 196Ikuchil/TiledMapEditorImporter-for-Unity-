@@ -38,7 +38,6 @@ namespace Resource.TiledMap
                 // タイルセット画像をスライスしていく
                 this.SliceTilseSet();
             });
-            //this.currentTileSet = this.tiledMap.TileSets[0];    // 複数はとりあえず想定しない
 
 
             if (this.sliceTileSet == null || this.sliceTileSet.Count == 0)
@@ -56,8 +55,6 @@ namespace Resource.TiledMap
             // オブジェクト配置
             this.SetUpObjects();
 
-            // カメラさんにプレイヤーを中央にして移すように移動してもらう
-            // Camera.main.SendMessage("SetupPlayer");
 
         }
 
@@ -114,6 +111,7 @@ namespace Resource.TiledMap
             }
 
             goLayer.transform.parent = this.gameObject.transform;
+
             List<TiledMap.TiledData> tiles = this.tiledMap.GetLayerData(layer);
             foreach (var tiledData in tiles)
             {
@@ -148,11 +146,11 @@ namespace Resource.TiledMap
 
         private void SetCollision(TiledMap.TiledData tiledData, GameObject tile)
         {
+
             if (tiledData.Properties == null || tiledData.Properties.Count == 0)
             {
                 return;
             }
-
             bool hasCollision = tiledData.Properties.Where(t =>
             {
                 return t.Name.Equals("IsCollision") && t.Value.Equals("1");

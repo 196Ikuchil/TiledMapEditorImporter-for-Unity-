@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Xml.Serialization;
 
+
 namespace Resource.TiledMap
 {
+    /// <summary>
+    /// TileSet用クラス
+    /// </summary>
     [XmlRoot("tileset")]
     public class TileSetXml
     {
@@ -19,15 +23,6 @@ namespace Resource.TiledMap
         public int Columns;
         [XmlElement("image")]
         public Image SourceImage;
-
-
-        //ResourceからImageまでのフルパスを渡す.
-        /*public string GetImageSourcePath(string pathHead)
-        {
-            string[] str = SourceImage.SourceName.Split('/');
-            var st = str[str.Length - 1].Split('.');
-            return pathHead + st[0];
-        }*/
 
     }
 
