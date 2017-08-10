@@ -11,7 +11,6 @@ namespace Resource.TiledMap
     {
         public TextAsset TMX;
         public Material TiledDefaultMaterial = null;
-        public string DirPath;
 
         private TiledMap tiledMap = null;
         private TiledMap.TileSet currentTileSet = null;
@@ -184,7 +183,7 @@ namespace Resource.TiledMap
                     }
                     // TypeをPrefabの名前として扱う
                     GameObject go = Instantiate(
-                        Resources.Load(path + obj.ID),//obj.Type),
+                        Resources.Load(path),
                     new Vector3(obj.X / obj.Width, obj.Y / obj.Height * -1, 0f),
                         this.gameObject.transform.rotation
                     ) as GameObject;
