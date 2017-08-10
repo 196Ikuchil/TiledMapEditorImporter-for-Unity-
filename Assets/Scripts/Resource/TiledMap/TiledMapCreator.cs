@@ -1,5 +1,5 @@
 ﻿/*********************************
- 2015-05-30
+2015-05-30
 *********************************/
 using UnityEngine;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ namespace Resource.TiledMap
     {
         public TextAsset TMX;
         public Material TiledDefaultMaterial = null;
-        public string DirPath;
 
         private TiledMap tiledMap = null;
         private TiledMap.TileSet currentTileSet = null;
@@ -32,14 +31,19 @@ namespace Resource.TiledMap
 
         private void CreateTiledMap()
         {
-            this.currentTileSet = this.tiledMap.TileSets[0];    // 複数はとりあえず想定しない
+            tiledMap.TileSets.ForEach(x =>
+            {
+                this.currentTileSet = x;
+                // タイルセット画像をスライスしていく
+                this.SliceTilseSet();
+            });
 
-            // タイルセット画像をスライスしていく
-            this.SliceTilseSet();
+
             if (this.sliceTileSet == null || this.sliceTileSet.Count == 0)
             {
                 return;
             }
+
 
             // 敷き詰める
             foreach (var layer in this.tiledMap.Layers)
@@ -50,17 +54,13 @@ namespace Resource.TiledMap
             // オブジェクト配置
             this.SetUpObjects();
 
-            // カメラさんにプレイヤーを中央にして移すように移動してもらう
-            // Camera.main.SendMessage("SetupPlayer");
 
         }
 
         private void SliceTilseSet()
-        {   //for(i)
-            //ここで指定されたpathからxmlを読み込み, image等をTileSetクラスに保存する
-            //var tileset = GetTileSetXml(this.currentTileSet.Source);
-            //this.tiledMap.SetImageData(0, tileset);
-            string path = tiledMap.GetImageSourcePath(0);//tileset.GetImageSourcePath(tileImagePathHead);
+        {
+
+            string path = tiledMap.GetImageSourcePath(currentTileSet);
             Sprite textureMap = Resources.Load(path, typeof(Sprite)) as Sprite;
 
             if (textureMap == null)
@@ -68,8 +68,10 @@ namespace Resource.TiledMap
                 Debug.LogError("can not find tileset image..." + path);
                 return;
             }
+            //xmlのimage情報はid順に並んでいるので最初のみ初期化すれば,その後は順番にリストに格納されていく
+            if (this.sliceTileSet == null)
+                this.sliceTileSet = new List<Sprite>(this.tiledMap.Width * this.tiledMap.Height);
 
-            this.sliceTileSet = new List<Sprite>(this.tiledMap.Width * this.tiledMap.Height);
             // スライスしていく
             int width = this.currentTileSet.SourceImage.Width / this.currentTileSet.TileWidth;
             int height = this.currentTileSet.SourceImage.Height / this.currentTileSet.TileHeight;
@@ -95,18 +97,7 @@ namespace Resource.TiledMap
             }
 
         }
-        /// <summary>
-        /// xmlから読み込んだimageのxmlpathから, xmlを読み込む
-        /// </summary>
-        /// <returns>The tile set xml.</returns>
-        /// <param name="path">Path.</param>
-        /*private TileSetXml GetTileSetXml(string path)
-        {
-            var filename = GetTileSetXmlPath(path);
-            var TMX = Resources.Load<TextAsset>(tileImagePathHead + filename);
-            var tileSetXml = XMLParser.LoadFromXml<TileSetXml>(TMX);
-            return tileSetXml;
-        }*/
+
 
 
         private void Tiled(TiledMap.Layer layer)
@@ -119,6 +110,7 @@ namespace Resource.TiledMap
             }
 
             goLayer.transform.parent = this.gameObject.transform;
+
             List<TiledMap.TiledData> tiles = this.tiledMap.GetLayerData(layer);
             foreach (var tiledData in tiles)
             {
@@ -153,11 +145,11 @@ namespace Resource.TiledMap
 
         private void SetCollision(TiledMap.TiledData tiledData, GameObject tile)
         {
+
             if (tiledData.Properties == null || tiledData.Properties.Count == 0)
             {
                 return;
             }
-
             bool hasCollision = tiledData.Properties.Where(t =>
             {
                 return t.Name.Equals("IsCollision") && t.Value.Equals("1");
@@ -191,8 +183,8 @@ namespace Resource.TiledMap
                     }
                     // TypeをPrefabの名前として扱う
                     GameObject go = Instantiate(
-                        Resources.Load(path + obj.Type),
-                        new Vector3(obj.X / obj.Width, obj.Y / obj.Height * -1, 0f),
+                        Resources.Load(path),
+                    new Vector3(obj.X / obj.Width, obj.Y / obj.Height * -1, 0f),
                         this.gameObject.transform.rotation
                     ) as GameObject;
 
@@ -216,16 +208,5 @@ namespace Resource.TiledMap
             }
         }
 
-        /// <summary>
-        /// ファイルパスから最後のファイル名のみ抽出する
-        /// </summary>
-        /// <returns>The tile set xml path.</returns>
-        /// <param name="path">Path.</param>
-        /*private string GetTileSetXmlPath(string path)
-        {
-            string[] str = path.Split('/');
-            string[] st = str[str.Length - 1].Split('.');
-            return st[0];
-        }*/
     }
 }

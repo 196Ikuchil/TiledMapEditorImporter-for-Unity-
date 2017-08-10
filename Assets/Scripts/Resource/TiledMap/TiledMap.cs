@@ -1,6 +1,6 @@
 ﻿/*********************************
- 2015-05-31 TiledMapデータ
- (.xmlの要素に従って配置)
+2015-05-31 TiledMapデータ
+(.xmlの要素に従って配置)
 *********************************/
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -90,6 +90,8 @@ namespace Resource.TiledMap
         {
             [XmlAttribute("name")]
             public string Name;
+            [XmlAttribute("type")]
+            public string Type;
             [XmlAttribute("value")]
             public string Value;
 
@@ -107,6 +109,8 @@ namespace Resource.TiledMap
             public int Width;
             [XmlAttribute("height")]
             public int Height;
+            [XmlElement("properties")]
+            public Properties Properties;
             [XmlElement("data")]
             public Data TileData;
         }
@@ -162,6 +166,8 @@ namespace Resource.TiledMap
 
         public class ObjectGroup
         {
+            [XmlAttribute("name")]
+            public string Name;
             [XmlElement("object")]
             public List<Object> Objects;
         }
@@ -174,13 +180,13 @@ namespace Resource.TiledMap
             [XmlAttribute("type")]
             public string Type;
             [XmlAttribute("x")]
-            public int X;
+            public float X;
             [XmlAttribute("y")]
-            public int Y;
+            public float Y;
             [XmlAttribute("width")]
-            public int Width;
+            public float Width;
             [XmlAttribute("height")]
-            public int Height;
+            public float Height;
             [XmlElement("properties")]
             public Properties Properties;
         }
@@ -245,7 +251,7 @@ namespace Resource.TiledMap
             List<TiledData> grid = new List<TiledData>(this.Width * this.Height);
 
             TiledData data = null;
-            var allproperty = this.getProperties();        // マップに設定されているプロパティを全取得
+            //var allproperty = this.getProperties();        // マップに設定されているプロパティを全取得
 
             for (int y = 0; y < targetLayer.Height; y++)
             {
@@ -258,6 +264,10 @@ namespace Resource.TiledMap
                     data.ID = this.convertToIDFromGID(data.GID);
                     data.X = x;
                     data.Y = y;
+                    if (targetLayer.Properties != null)
+                        data.Properties = targetLayer.Properties.All;
+
+                    /*
                     if (allproperty == null)
                     {
                         data.Properties = null;
@@ -265,7 +275,7 @@ namespace Resource.TiledMap
                     else
                     {
                         data.Properties = allproperty.ContainsKey(data.ID) ? allproperty[data.ID] : null;
-                    }
+                    }*/
                     grid.Add(data);
                 }
             }
@@ -286,6 +296,7 @@ namespace Resource.TiledMap
             return null;
         }
 
+        //現在使っていない
         private Dictionary<int, List<Property>> getProperties()
         {
 
@@ -388,9 +399,9 @@ namespace Resource.TiledMap
             return st[0];
         }
 
-        public string GetImageSourcePath(int i)
+        public string GetImageSourcePath(TileSet set)
         {
-            return tileImagePathHead + this.GetFileNameFromPath(TileSets[i].SourceImage.SourceName);
+            return tileImagePathHead + this.GetFileNameFromPath(set.SourceImage.SourceName);
         }
 
         #endregion

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
- <tileset firstgid="1" source="../siba.tsx"/>
- <tileset firstgid="6" source="../townObject.tsx"/>
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="13">
+ <tileset firstgid="1" source="siba.tsx"/>
+ <tileset firstgid="6" source="townObject.tsx"/>
  <layer name="floor" width="20" height="20">
   <data encoding="csv">
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -77,4 +77,18 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="collision">
+  <object id="11" x="301.403" y="505.261" width="32" height="32">
+   <properties>
+    <property name="Path" value="MapObject/UpPoint"/>
+    <property name="start" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="12" x="461.42" y="297.019" width="32" height="32">
+   <properties>
+    <property name="Path" value="MapObject/DownPoint"/>
+    <property name="start2" type="int" value="2"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>
