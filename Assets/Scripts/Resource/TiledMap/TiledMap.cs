@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using UniLinq;
+using UnityEngine;
 
 namespace Resource.TiledMap
 {
@@ -128,7 +129,19 @@ namespace Resource.TiledMap
             /// </summary>
             public void SetTilesFromData()
             {
-
+                foreach (string line in data.Split('\n'))
+                {
+                    foreach (string s in line.Split(','))
+                    {
+                        int v = 0;
+                        // ","で終わるのでチェックが必要
+                        if (int.TryParse(s, out v) == false) { continue; }
+                        // 値を設定
+                        var tile = new Tile();
+                        tile.SetInfo(v);
+                        Tiles.Add(tile);
+                    }
+                }
             }
         }
 
@@ -140,6 +153,11 @@ namespace Resource.TiledMap
             public int GID;
             [XmlElement("properties")]
             public Properties Properties;
+
+            public void SetInfo(int gid)
+            {
+                this.GID = gid;
+            }
         }
 
         public class ObjectGroup
@@ -187,6 +205,9 @@ namespace Resource.TiledMap
         public List<Layer> Layers;
         [XmlElement("objectgroup")]
         public List<ObjectGroup> ObjectGroups;
+
+        //TileSetのImageとxmlまでのResource以下のpath
+        private string tileImagePathHead = "Tiles/";
 
         public class TiledData
         {
@@ -309,8 +330,39 @@ namespace Resource.TiledMap
             return gid - 1;
         }
 
+        #region AdjustForProductVersion
+
         /// <summary>
-        /// 別のファイルから読み込んだデータをこちらのデータに写す.
+        /// xmlPaserでインスタンスを生成後呼ぶ
+        /// TiledMapEditorの仕様変更のクッション
+        /// </summary>
+        public void InitializeSettings()
+        {
+            //Imageを全て自分の中にロード
+            for (int i = 0; i < this.TileSets.Count; i++)
+            {
+                var tileset = GetTileSetXml(this.TileSets[i].Source);
+                this.SetImageData(i, tileset);
+            }
+
+            //TileをstringからList<Tile>に変換代入
+            Layers.ForEach(x => x.TileData.SetTilesFromData());
+        }
+
+        /// <summary>
+        /// xmlから読み込んだimageのxmlpathから, xmlを読み込む
+        /// </summary>
+        /// <returns>The tile set xml.</returns>
+        /// <param name="path">Path.</param>
+        private TileSetXml GetTileSetXml(string path)
+        {
+            var filename = GetFileNameFromPath(path);
+            var TMX = Resources.Load<TextAsset>(tileImagePathHead + filename);
+            var tileSetXml = XMLParser.LoadFromXml<TileSetXml>(TMX);
+            return tileSetXml;
+        }
+        /// <summary>
+        /// 別のファイルから読み込んだデータを自分の中に移植.
         /// </summary>
         /// <param name="i">The index.</param>
         /// <param name="tileset">Tileset.</param>
@@ -323,5 +375,24 @@ namespace Resource.TiledMap
             sets.Name = tileset.Name;
         }
 
+
+        /// <summary>
+        /// ファイルパスから最後のファイル名のみ抽出する
+        /// </summary>
+        /// <returns>The tile set xml path.</returns>
+        /// <param name="path">Path.</param>
+        private string GetFileNameFromPath(string path)
+        {
+            string[] str = path.Split('/');
+            string[] st = str[str.Length - 1].Split('.');
+            return st[0];
+        }
+
+        public string GetImageSourcePath(int i)
+        {
+            return tileImagePathHead + this.GetFileNameFromPath(TileSets[i].SourceImage.SourceName);
+        }
+
+        #endregion
     }
 }
